@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t calvincolton/fibonacci-react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run calvincolton/fibonacci-react-test npm test -- --coverage
+
+after_success:
+  - docker build -t calvincolton/fibonacci-client ./client
+  - docker build -t calvincolton/fibonacci-nginx ./nginx
+  - docker build -t calvincolton/fibonacci-server ./server
+  - docker build -t calvincolton/fibonacci-worker ./worker
+  #  Log into docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take images and push them to docker hub
+  - docker push calvincolton/fibonacci-client
+  - docker push calvincolton/fibonacci-nginx
+  - docker push calvincolton/fibonacci-server
+  - docker push calvincolton/fibonacci-worker
