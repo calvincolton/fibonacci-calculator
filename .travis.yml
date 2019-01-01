@@ -20,3 +20,16 @@ after_success:
   - docker push calvincolton/fibonacci-nginx
   - docker push calvincolton/fibonacci-server
   - docker push calvincolton/fibonacci-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-west-1
+  app: fibonacci-calculator
+  env: FibonacciCalculator-env
+  bucket_name: elasticbeanstalk-us-west-1-575512098170
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
